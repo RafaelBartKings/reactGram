@@ -4,7 +4,7 @@
 	align-items: center;
 	background-color: #000;
 	border-bottom: 1px solid #363636;
-	padding: .1em .1em;
+	padding: 0.1em .1em;
 }
 
 #search-form {
@@ -29,6 +29,7 @@
 #nav-links {
 	display: flex;
 	align-items: center;
+	list-style: none;
 }
 
 #nav-links li {

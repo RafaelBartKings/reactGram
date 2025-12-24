@@ -13,7 +13,7 @@ const Navbar = () => {
    return (
       <nav id="nav">
          <Link to="/">ReactGram</Link>
-         <form action="">
+         <form action="" id='search-form'>
             <BsSearch />
             <input type="text" placeholder="pesquisar" />
          </form>
