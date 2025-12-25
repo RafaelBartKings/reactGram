@@ -21,6 +21,9 @@ const userCreateValidation = () => {
          .isString()
          .withMessage('Password Confirmation must be filled out')
          .custom((value, { req }) => {
+            if (!req.body.password) {
+               throw new Error('Password field is required');
+            }
             if (value !== req.body.password) {
                throw new Error('Password Confirmation does not match Password');
             }
