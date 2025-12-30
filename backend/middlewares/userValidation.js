@@ -38,7 +38,7 @@ const loginValidation = () => {
          .isString()
          .withMessage('Email must be filled out.')
          .isEmail()
-         .withMessage('Email must be valid.'),
+         .withMessage('Usuário não cadastrado.'),
       body('password').isString().withMessage('Password must be filled out.')
    ];
 };
