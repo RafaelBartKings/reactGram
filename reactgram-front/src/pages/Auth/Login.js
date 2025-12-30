@@ -20,9 +20,9 @@ const Login = () => {
    };
 
    // Clean all auth state - REMOVA este useEffect temporariamente
-   // useEffect(() => {
-   //    dispatch(reset());
-   // }, [dispatch]);
+   useEffect(() => {
+      dispatch(reset());
+   }, [dispatch]);
 
    return (
       <div id="login">
