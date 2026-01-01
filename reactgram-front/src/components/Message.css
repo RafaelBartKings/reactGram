@@ -1,21 +1,32 @@
+/* components/Message.css */
 .message {
-	border-radius: 5px;
-	padding: 5px 10px;
-	margin: 0;
-	display: flex;
-	justify-content: center;
-	align-items: center;
-}
-
-.message.error {
-	color: #721C24;
-	background-color: #f8d7da;
-	border-color: #f5c6cb;
+   padding: 1rem;
+   margin: 1rem 0;
+   border-radius: 5px;
+   text-align: center;
+   font-weight: bold;
 }
 
 .message.success {
-	color: #155724;
-	background-color: F8D7DA;
-	border-color: #C3e6cd;
+   background-color: #d4edda;
+   color: #155724;
+   border: 1px solid #c3e6cb;
 }
 
+.message.error {
+   background-color: #f8d7da;
+   color: #721c24;
+   border: 1px solid #f5c6cb;
+}
+
+.message.info {
+   background-color: #d1ecf1;
+   color: #0c5460;
+   border: 1px solid #bee5eb;
+}
+
+.message.warning {
+   background-color: #fff3cd;
+   color: #856404;
+   border: 1px solid #ffeaa7;
+}

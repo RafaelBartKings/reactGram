@@ -42,38 +42,51 @@ const EditProfile = () => {
    const handleSubmit = async e => {
       e.preventDefault();
 
+      console.log('=== INICIANDO ATUALIZAÇÃO ===');
+      console.log('profileImage:', profileImage);
+      console.log('É File?', profileImage instanceof File);
+
       // Gather user data from states
       const userData = {
-         name
+         name: name.trim()
       };
 
-      if (bio) {
-         userData.bio = bio;
+      if (bio.trim()) {
+         userData.bio = bio.trim();
       }
 
-      if (password) {
-         userData.password = password;
+      if (password.trim()) {
+         userData.password = password.trim();
       }
 
       console.log('Dados coletados:', userData);
 
-      // Se tiver imagem, usa FormData
-      if (profileImage) {
+      // CORREÇÃO: Verificação melhorada para imagem
+      // Se tiver imagem E for um arquivo válido, usa FormData
+      if (profileImage && (profileImage instanceof File || profileImage instanceof Blob)) {
+         console.log('✅ TEM IMAGEM VÁLIDA - Criando FormData');
+         
          const formData = new FormData();
 
          // Adiciona campos de texto
-         formData.append('name', name);
-         if (bio) formData.append('bio', bio);
-         if (password) formData.append('password', password);
+         formData.append('name', name.trim());
+         if (bio.trim()) formData.append('bio', bio.trim());
+         if (password.trim()) formData.append('password', password.trim());
 
          // Adiciona a imagem
          formData.append('profileImage', profileImage);
+
+         // Debug: mostra o que tem no FormData
+         console.log('Conteúdo do FormData:');
+         for (let pair of formData.entries()) {
+            console.log(`${pair[0]}:`, pair[1]);
+         }
 
          console.log('Enviando como FormData');
          await dispatch(updateProfile(formData));
       } else {
          // Se não tiver imagem, envia como JSON normal
-         console.log('Enviando como JSON:', userData);
+         console.log('❌ SEM IMAGEM VÁLIDA - Enviando como JSON:', userData);
          await dispatch(updateProfile(userData));
       }
 
@@ -85,10 +98,24 @@ const EditProfile = () => {
    const handleFile = e => {
       // image preview
       const image = e.target.files[0];
-
-      setPreviewImage(image);
-      // update image state
-      setProfileImage(image);
+      
+      if (image) {
+         console.log('Arquivo selecionado:', {
+            name: image.name,
+            type: image.type,
+            size: image.size,
+            isFile: image instanceof File
+         });
+         
+         // Cria URL para preview
+         const imageUrl = URL.createObjectURL(image);
+         setPreviewImage(imageUrl);
+         setProfileImage(image);
+      } else {
+         console.log('Nenhum arquivo selecionado');
+         setPreviewImage('');
+         setProfileImage(null);
+      }
    };
 
    return (
@@ -102,7 +129,7 @@ const EditProfile = () => {
                className="profile-image"
                src={
                   previewImage
-                     ? URL.createObjectURL(previewImage)
+                     ? previewImage
                      : `${uploads}/users/${user.profileImage}`
                }
                alt={user.name}
@@ -120,12 +147,17 @@ const EditProfile = () => {
                type="email"
                placeholder="E-mail"
                value={email || ''}
-               disabled
+               readOnly
                title="E-mail não pode ser alterado"
             />
             <label>
                <span>Imagem do Perfil</span>
                <input type="file" onChange={handleFile} accept="image/*" />
+               {profileImage && (
+                  <div style={{ fontSize: '12px', marginTop: '5px', color: '#666' }}>
+                     Selecionado: {profileImage.name} ({Math.round(profileImage.size / 1024)} KB)
+                  </div>
+               )}
             </label>
             <label>
                <span>Bio:</span>
