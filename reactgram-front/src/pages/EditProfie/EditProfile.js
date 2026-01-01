@@ -7,7 +7,7 @@ import { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 
 // Redux
-import { profile, resetMessage } from '../../slices/userSlice';
+import { profile, resetMessage, updateProfile } from '../../slices/userSlice';
 
 // Componente
 import Message from '../../components/Message';
@@ -20,13 +20,12 @@ const EditProfile = () => {
    // states
    const [name, setName] = useState('');
    const [email, setEmail] = useState('');
-   const [password, setPassword] = useState();
-   const [profileImage, setProfileImage] = useState('');
+   const [password, setPassword] = useState('');
+   const [profileImage, setProfileImage] = useState(null);
    const [bio, setBio] = useState('');
    const [previewImage, setPreviewImage] = useState('');
 
    // load user data
-
    useEffect(() => {
       dispatch(profile());
    }, [dispatch]);
@@ -36,12 +35,51 @@ const EditProfile = () => {
       if (user) {
          setName(user.name);
          setEmail(user.email);
-         setBio(user.bio);
+         setBio(user.bio || '');
       }
    }, [user]);
 
-   const handleSubmit = e => {
+   const handleSubmit = async e => {
       e.preventDefault();
+
+      // Gather user data from states
+      const userData = {
+         name
+      };
+
+      if (bio) {
+         userData.bio = bio;
+      }
+
+      if (password) {
+         userData.password = password;
+      }
+
+      console.log('Dados coletados:', userData);
+
+      // Se tiver imagem, usa FormData
+      if (profileImage) {
+         const formData = new FormData();
+
+         // Adiciona campos de texto
+         formData.append('name', name);
+         if (bio) formData.append('bio', bio);
+         if (password) formData.append('password', password);
+
+         // Adiciona a imagem
+         formData.append('profileImage', profileImage);
+
+         console.log('Enviando como FormData');
+         await dispatch(updateProfile(formData));
+      } else {
+         // Se não tiver imagem, envia como JSON normal
+         console.log('Enviando como JSON:', userData);
+         await dispatch(updateProfile(userData));
+      }
+
+      setTimeout(() => {
+         dispatch(resetMessage());
+      }, 2000);
    };
 
    const handleFile = e => {
@@ -49,8 +87,7 @@ const EditProfile = () => {
       const image = e.target.files[0];
 
       setPreviewImage(image);
-
-      // upadte image state
+      // update image state
       setProfileImage(image);
    };
 
@@ -71,22 +108,24 @@ const EditProfile = () => {
                alt={user.name}
             />
          )}
-         <form action="" onSubmit={handleSubmit}>
+         <form onSubmit={handleSubmit}>
             <input
                type="text"
                placeholder="Nome"
                onChange={e => setName(e.target.value)}
                value={name || ''}
+               required
             />
             <input
                type="email"
                placeholder="E-mail"
-               onChange={e => setEmail(e.target.value)}
                value={email || ''}
+               disabled
+               title="E-mail não pode ser alterado"
             />
-            <label htmlFor="">
+            <label>
                <span>Imagem do Perfil</span>
-               <input type="file" onChange={handleFile} />
+               <input type="file" onChange={handleFile} accept="image/*" />
             </label>
             <label>
                <span>Bio:</span>
@@ -97,16 +136,19 @@ const EditProfile = () => {
                   value={bio || ''}
                />
             </label>
-            <label htmlFor="">
+            <label>
                <span>Quer alterar sua senha?</span>
                <input
-                  type="text"
+                  type="password"
                   placeholder="Digite sua nova senha"
                   onChange={e => setPassword(e.target.value)}
                   value={password || ''}
                />
             </label>
-            <input type="submit" value="Atualizar" />
+            {!loading && <input type="submit" value="Atualizar" />}
+            {loading && <input type="submit" value="Aguarde..." disabled />}
+            {error && <Message msg={error} type="error" />}
+            {message && <Message msg={message} type="success" />}
          </form>
       </div>
    );

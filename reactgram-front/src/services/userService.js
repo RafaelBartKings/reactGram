@@ -18,17 +18,34 @@ const profile = async (data, token) => {
 };
 
 // update user details
-const updateProfile = async (data, token) => {
-   const config = requestConfig('PUT', data, token, true);
-
+// userService.js
+const updateProfile = async (userData, token) => {
    try {
-      const res = await fetch(api + '/users/', config)
-         .then(res => res.json())
-         .catch(err => err);
+      console.log('Sending update request:', userData);
 
-      return res;
+      const headers = {
+         Authorization: `Bearer ${token}`,
+         'Content-Type': 'application/json' // ADICIONE ESTA LINHA
+      };
+
+      const response = await fetch('http://localhost:5000/api/users/', {
+         method: 'PUT',
+         headers: headers,
+         body: JSON.stringify(userData)
+      });
+
+      console.log('Response status:', response.status);
+
+      if (!response.ok) {
+         const errorData = await response.json();
+         console.error('Server error response:', errorData);
+         throw new Error(errorData.errors?.[0] || 'Update failed');
+      }
+
+      return await response.json();
    } catch (error) {
-      console.log(error);
+      console.error('Update profile error:', error);
+      throw error;
    }
 };
 

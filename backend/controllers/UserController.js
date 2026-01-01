@@ -115,45 +115,59 @@ const getCurrentUser = async (req, res) => {
 };
 
 const update = async (req, res) => {
-   const { name, password, bio } = req.body;
-
-   let profileImage = null;
-
-   if (req.file) {
-      profileImage = req.file.filename;
+   try {
+      console.log('\n=== UPDATE REQUEST ===');
+      
+      const { name, password, bio } = req.body || {};
+      
+      let profileImage = null;
+      
+      if (req.file) {
+         profileImage = req.file.filename;
+      }
+      
+      const reqUser = req.user;
+      
+      const user = await User.findById(reqUser._id).select('-password');
+      
+      if (!user) {
+         return res.status(404).json({ errors: ['User not found'] });
+      }
+      
+      // Atualiza campos
+      if (name) user.name = name;
+      if (bio) user.bio = bio;
+      
+      if (password) {
+         const salt = await bcrypt.genSalt(10);
+         user.password = await bcrypt.hash(password, salt);
+      }
+      
+      if (profileImage) {
+         user.profileImage = profileImage;
+      }
+      
+      await user.save();
+      
+      // Prepara resposta INCLUINDO O TOKEN
+      const userResponse = user.toObject();
+      delete userResponse.password;
+      
+      // Se veio token no body (para atualização), mantém na resposta
+      const responseData = {
+         message: 'User updated successfully',
+         user: {
+            ...userResponse,
+            token: req.body.token || generateToken(user._id) // Mantém ou gera novo
+         }
+      };
+      
+      res.status(200).json(responseData);
+      
+   } catch (error) {
+      console.error('Update error:', error);
+      res.status(500).json({ errors: ['Server error'] });
    }
-
-   const reqUser = req.user;
-
-   const user = await User.findById(reqUser._id).select('-password');
-
-   if (!user) {
-      return res.status(404).json({ errors: ['User not found'] });
-   }
-
-   if (name) {
-      user.name = name;
-   }
-
-   if (password) {
-      // 2. Encrypt Password (Criptografia)
-      const salt = await bcrypt.genSalt(10); // Reduzi o salt para 10, 12 é overkill
-      const passwordHash = await bcrypt.hash(password, salt);
-
-      user.password = passwordHash;
-   }
-
-   if (profileImage) {
-      user.profileImage = profileImage;
-   }
-
-   if (bio) {
-      user.bio = bio;
-   }
-
-   await user.save();
-
-   res.status(200).json(user);
 };
 
 // Get user by id
