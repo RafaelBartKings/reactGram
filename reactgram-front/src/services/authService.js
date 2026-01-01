@@ -39,7 +39,7 @@ const login = async data => {
    const config = requestConfig('POST', data);
 
    try {
-      console.log('Login attempt with:', data); // DEBUG
+      // console.log('Login attempt with:', data); // DEBUG
 
       const response = await fetch(api + '/users/login', config);
 

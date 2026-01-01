@@ -1,4 +1,4 @@
-// userSlice.js - VERSÃO COMPLETA CORRIGIDA
+// userSlice.js - VERSÃO CORRIGIDA COM ESTADOS SEPARADOS
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 
 // Pega token do localStorage
@@ -25,14 +25,15 @@ const getUser = () => {
 };
 
 const initialState = {
-   user: getUser(),
+   user: getUser(),           // Usuário autenticado (EU)
+   visitedUser: {},           // Usuário sendo visitado (OUTRO)
    error: false,
    success: false,
    loading: false,
    message: null
 };
 
-// Get user profile - FUNÇÃO QUE ESTAVA FALTANDO
+// Get MY profile (usuário autenticado)
 export const profile = createAsyncThunk('user/profile', async (_, thunkAPI) => {
    try {
       const token = getToken();
@@ -47,7 +48,6 @@ export const profile = createAsyncThunk('user/profile', async (_, thunkAPI) => {
          }
       });
 
-      console.log('Profile response status:', response.status);
 
       if (!response.ok) {
          const errorData = await response.json();
@@ -55,7 +55,6 @@ export const profile = createAsyncThunk('user/profile', async (_, thunkAPI) => {
       }
 
       const data = await response.json();
-      console.log('Profile data:', data);
 
       // Preserva o token
       const userWithToken = {
@@ -77,11 +76,8 @@ export const updateProfile = createAsyncThunk(
    'user/updateProfile',
    async (userData, { rejectWithValue }) => {
       try {
-         console.log('🔄 UPDATE PROFILE INICIADO');
-         console.log('Tipo dos dados:', typeof userData);
-         console.log('É FormData?', userData instanceof FormData);
 
-         // Pega token
+
          const token = getToken();
 
          if (!token) {
@@ -96,15 +92,12 @@ export const updateProfile = createAsyncThunk(
 
          if (userData instanceof FormData) {
             console.log('📤 Enviando como FormData');
-            // NÃO adicionar Content-Type para FormData
             body = userData;
          } else {
             console.log('📤 Enviando como JSON');
             headers['Content-Type'] = 'application/json';
             body = JSON.stringify(userData);
          }
-
-         console.log('Headers:', headers);
 
          const response = await fetch('http://localhost:5000/api/users/', {
             method: 'PUT',
@@ -137,6 +130,41 @@ export const updateProfile = createAsyncThunk(
    }
 );
 
+// Get OTHER user details
+export const getUserDetails = createAsyncThunk(
+   'user/getUserDetails',
+   async (id, thunkAPI) => {
+      try {
+         console.log('🆔 Buscando detalhes do usuário com ID:', id);
+
+         // Verifica se o ID é válido
+         if (!id || id === 'undefined') {
+            // console.error('❌ ID inválido ou não fornecido');
+            return thunkAPI.rejectWithValue('ID do usuário é necessário');
+         }
+
+         // Faz a requisição
+         const response = await fetch(`http://localhost:5000/api/users/${id}`);
+
+         console.log('📤 Status da resposta:', response.status);
+
+         if (!response.ok) {
+            const errorData = await response.json();
+            // console.error('❌ Erro do servidor:', errorData);
+            throw new Error(errorData.errors?.[0] || 'Falha ao buscar usuário');
+         }
+
+         const data = await response.json();
+         console.log('✅ Usuário encontrado:', data.name);
+
+         return data;
+      } catch (error) {
+         console.error('💥 Erro ao buscar detalhes do usuário:', error);
+         return thunkAPI.rejectWithValue(error.message);
+      }
+   }
+);
+
 export const userSlice = createSlice({
    name: 'user',
    initialState,
@@ -145,21 +173,19 @@ export const userSlice = createSlice({
          state.message = null;
       },
       loginSuccess: (state, action) => {
-         // Garante que o token está incluído
          state.user = action.payload;
          state.success = true;
          localStorage.setItem('user', JSON.stringify(action.payload));
       },
       logout: state => {
          state.user = {};
+         state.visitedUser = {};
          state.success = false;
          localStorage.removeItem('user');
       },
-      // Nova action para salvar token
       saveToken: (state, action) => {
          if (state.user) {
             state.user.token = action.payload;
-            // Atualiza localStorage
             const currentUser = localStorage.getItem('user');
             if (currentUser) {
                try {
@@ -171,11 +197,16 @@ export const userSlice = createSlice({
                }
             }
          }
+      },
+      // Novo: limpa o visitedUser
+      clearVisitedUser: (state) => {
+         state.visitedUser = {};
       }
    },
+
    extraReducers: builder => {
       builder
-         // CASES PARA PROFILE
+         // CASES PARA PROFILE (MEU perfil)
          .addCase(profile.pending, state => {
             state.loading = true;
             state.error = false;
@@ -184,7 +215,7 @@ export const userSlice = createSlice({
             state.loading = false;
             state.success = true;
             state.error = false;
-            state.user = action.payload;
+            state.user = action.payload; // Atualiza o USUÁRIO AUTENTICADO
          })
          .addCase(profile.rejected, (state, action) => {
             state.loading = false;
@@ -192,7 +223,7 @@ export const userSlice = createSlice({
             state.user = {};
          })
 
-         // CASES PARA UPDATE PROFILE
+         // CASES PARA UPDATE PROFILE (atualiza MEU perfil)
          .addCase(updateProfile.pending, state => {
             state.loading = true;
             state.error = false;
@@ -201,17 +232,34 @@ export const userSlice = createSlice({
             state.loading = false;
             state.success = true;
             state.error = false;
-            state.user = action.payload;
+            state.user = action.payload; // Atualiza o USUÁRIO AUTENTICADO
             state.message = 'Atualizado com sucesso!';
          })
          .addCase(updateProfile.rejected, (state, action) => {
             state.loading = false;
             state.error = action.payload;
             state.success = false;
+         })
+
+         // CASO PARA getUserDetails (perfil de OUTRO usuário)
+         .addCase(getUserDetails.pending, state => {
+            state.loading = true;
+            state.error = false;
+         })
+         .addCase(getUserDetails.fulfilled, (state, action) => {
+            state.loading = false;
+            state.success = true;
+            state.error = false;
+            state.visitedUser = action.payload; // Salva no visitedUser, NÃO no user
+         })
+         .addCase(getUserDetails.rejected, (state, action) => {
+            state.loading = false;
+            state.error = action.payload;
+            state.visitedUser = {};
          });
    }
 });
 
-export const { resetMessage, loginSuccess, logout, saveToken } =
+export const { resetMessage, loginSuccess, logout, saveToken, clearVisitedUser } =
    userSlice.actions;
 export default userSlice.reducer;
