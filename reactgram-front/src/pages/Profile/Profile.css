@@ -1,3 +1,4 @@
+/* SEU CSS ATUAL (mantenha tudo isso) */
 #profile {
    width: 50%;
    margin: 0 auto;
@@ -79,4 +80,170 @@
 
 .btn:hover {
    background: #545b62;
+}
+
+/* AGORA ADICIONE ESTAS NOVAS REGRAS NO FINAL */
+
+/* Preview da imagem */
+.image-preview {
+   margin: 15px 0;
+   text-align: center;
+}
+
+.preview-label {
+   display: block;
+   color: #666;
+   margin-top: 8px;
+   font-size: 14px;
+}
+
+.preview-image-container {
+   display: inline-block;
+   max-width: 200px;
+   max-height: 150px;
+   overflow: hidden;
+   border-radius: 4px;
+   border: 1px solid #ddd;
+   background: #f9f9f9;
+   padding: 5px;
+}
+
+.preview-image {
+   max-width: 100%;
+   max-height: 140px;
+   display: block;
+   object-fit: contain;
+}
+
+/* Formulário */
+.new-photo {
+   margin: 30px 0;
+   padding: 1em;
+   border-bottom: 1px solid #363636;
+}
+
+.new-photo h3 {
+   margin: 0 0 20px 0;
+   color: #333;
+}
+
+.new-photo form {
+   display: flex;
+   flex-direction: column;
+   gap: 15px;
+   margin-top: 20px;
+}
+
+.new-photo label {
+   display: flex;
+   flex-direction: column;
+   gap: 5px;
+}
+
+.new-photo label span {
+   color: #333;
+   font-size: 14px;
+}
+
+.new-photo input[type="text"] {
+   padding: 8px 10px;
+   border: 1px solid #ddd;
+   border-radius: 4px;
+   font-size: 14px;
+}
+
+.new-photo input[type="file"] {
+   padding: 6px;
+   border: 1px solid #ddd;
+   border-radius: 4px;
+   background: #f9f9f9;
+}
+
+.new-photo button {
+   background: #007bff;
+   color: white;
+   padding: 10px 20px;
+   border: none;
+   border-radius: 4px;
+   cursor: pointer;
+   font-size: 16px;
+   transition: background 0.3s;
+   margin-top: 10px;
+}
+
+.new-photo button:hover:not(:disabled) {
+   background: #0056b3;
+}
+
+.new-photo button:disabled {
+   background: #6c757d;
+   cursor: not-allowed;
+}
+
+/* Mensagens */
+.messages-container {
+   margin-top: 15px;
+}
+
+/* Galeria de fotos */
+.user-photos {
+   margin: 30px 0;
+   padding: 1em;
+   border-top: 1px solid #363636;
+}
+
+.user-photos h3 {
+   margin: 0 0 20px 0;
+   color: #333;
+}
+
+.photos-container {
+   display: grid;
+   grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+   gap: 15px;
+}
+
+.photo-item {
+   background: white;
+   border: 1px solid #ddd;
+   border-radius: 4px;
+   overflow: hidden;
+}
+
+.photo-item img {
+   width: 100%;
+   height: 150px;
+   object-fit: cover;
+}
+
+.photo-title {
+   padding: 10px;
+   margin: 0;
+   color: #333;
+   font-size: 14px;
+   text-align: center;
+}
+
+.photo-item small {
+   display: block;
+   padding: 0 10px 10px;
+   color: #666;
+   font-size: 11px;
+   text-align: center;
+}
+
+/* Spinner */
+.spinner {
+   display: inline-block;
+   width: 16px;
+   height: 16px;
+   border: 2px solid rgba(255,255,255,0.3);
+   border-radius: 50%;
+   border-top-color: white;
+   animation: spin 1s linear infinite;
+   margin-right: 8px;
+}
+
+@keyframes spin {
+   to { transform: rotate(360deg); }
 }

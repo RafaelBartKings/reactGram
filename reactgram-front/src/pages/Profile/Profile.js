@@ -1,4 +1,4 @@
-// Profile.js - CORREÇÃO APLICADA
+// Profile.js - VERSÃO COM MENSAGEM DE SUCESSO
 import './Profile.css';
 
 import { uploads } from '../../utils/config';
@@ -16,12 +16,9 @@ const Profile = () => {
    const navigate = useNavigate();
    const dispatch = useDispatch();
 
-   // CORREÇÃO: Adicionado valor padrão para evitar undefined
    const { visitedUser, loading, error } = useSelector(state => state.user || {});
-   
    const { user: userAuth } = useSelector(state => state.auth || {});
    
-   // CORREÇÃO PRINCIPAL: Adicionado valor padrão completo para state.photo
    const {
       photos = [],
       loading: loadingPhoto = false,
@@ -31,17 +28,15 @@ const Profile = () => {
 
    const [title, setTitle] = useState('');
    const [image, setImage] = useState('');
+   const [preview, setPreview] = useState('');
+   const [localSuccess, setLocalSuccess] = useState(''); // ← ESTADO LOCAL PARA MENSAGEM
 
-   // Determina qual usuário mostrar - com verificação segura
    const isMyProfile = userAuth && id && userAuth._id && id === userAuth._id;
    const userToShow = isMyProfile ? userAuth : visitedUser;
 
-   // New form and edit form refs
    const newPhotoForm = useRef();
-   const editPhotoForm = useRef();
 
    useEffect(() => {
-      // Verificação mais segura
       if (!id || id === 'undefined') {
          if (userAuth && userAuth._id) {
             navigate(`/users/${userAuth._id}`);
@@ -51,9 +46,7 @@ const Profile = () => {
          return;
       }
 
-      // Se for o perfil de outro usuário, busca os dados
       if (id && id !== 'undefined') {
-         // Verifica se é o perfil de outro usuário
          if (!userAuth || !userAuth._id || id !== userAuth._id) {
             dispatch(getUserDetails(id));
          }
@@ -64,10 +57,16 @@ const Profile = () => {
       const file = e.target.files[0];
       if (file) {
          setImage(file);
+         
+         const reader = new FileReader();
+         reader.onloadend = () => {
+            setPreview(reader.result);
+         };
+         reader.readAsDataURL(file);
       }
    };
 
-   const submitHandle = e => {
+   const submitHandle = async e => {
       e.preventDefault();
 
       if (!image) {
@@ -75,18 +74,57 @@ const Profile = () => {
          return;
       }
 
-      const formData = new FormData(); // CORREÇÃO: "FormData" com F maiúsculo
+      if (!title.trim()) {
+         alert('Digite um título para a foto!');
+         return;
+      }
+
+      const formData = new FormData();
       formData.append('title', title);
       formData.append('image', image);
 
-      dispatch(publishPhoto(formData));
+      try {
+         const result = await dispatch(publishPhoto(formData));
+         
+         if (publishPhoto.fulfilled.match(result)) {
+            console.log('Foto publicada com sucesso:', result.payload);
+            
+            // Limpa o formulário
+            setTitle('');
+            setImage('');
+            setPreview('');
+            
+            // Limpa o input de arquivo
+            const fileInput = document.querySelector('input[type="file"]');
+            if (fileInput) fileInput.value = '';
+            
+            // Define mensagem de sucesso local
+            setLocalSuccess('Foto publicada com sucesso!');
+            
+            // Limpa a mensagem local após 3 segundos
+            setTimeout(() => {
+               setLocalSuccess('');
+            }, 3000);
+            
+            // Limpa a mensagem do Redux se existir
+            setTimeout(() => {
+               dispatch(resetMessage());
+            }, 3000);
+         }
+         
+         // Se houver erro
+         if (publishPhoto.rejected.match(result)) {
+            console.error('Erro ao publicar foto:', result.error);
+         }
+      } catch (error) {
+         console.error('Erro ao publicar foto:', error);
+      }
+   };
 
-      setTitle('');
-      setImage('');
-
-      setTimeout(() => {
-         dispatch(resetMessage());
-      }, 2000);
+   // Limpa a mensagem manualmente
+   const handleCloseMessage = () => {
+      dispatch(resetMessage());
+      setLocalSuccess('');
    };
 
    // Loading
@@ -133,7 +171,7 @@ const Profile = () => {
                   alt={userToShow.name}
                   className="profile-avatar"
                   onError={e => {
-                     e.target.src = '/default-avatar.png'; // Adicione uma imagem padrão
+                     e.target.src = '/default-avatar.png';
                   }}
                />
             )}
@@ -141,75 +179,116 @@ const Profile = () => {
                <h2>{userToShow.name}</h2>
                {userToShow.bio && <p className="bio">{userToShow.bio}</p>}
 
-               {/* Mostra email apenas no próprio perfil */}
                {isMyProfile && userToShow.email && (
                   <p className="email">{userToShow.email}</p>
                )}
 
-               {/* Botão de editar apenas no próprio perfil */}
                {isMyProfile && (
-                  <Link to="/profile/edit" className="btn-edit"> {/* Supondo que tenha uma rota de edição */}
+                  <Link to="/profile/edit" className="btn-edit">
                      <BsPencilFill /> Editar Perfil
                   </Link>
                )}
             </div>
          </div>
 
-         {/* Mostra formulário de foto apenas no próprio perfil */}
          {isMyProfile && (
             <>
                <div className="new-photo" ref={newPhotoForm}>
                   <h3>Compartilhe algum momento seu:</h3>
+                  
+                  {/* Preview da imagem */}
+                  {preview && (
+                     <div className="image-preview">
+                        <div className="preview-image-container">
+                           <img src={preview} alt="Preview" className="preview-image" />
+                        </div>
+                        <p className="preview-label">Pré-visualização</p>
+                     </div>
+                  )}
+                  
                   <form onSubmit={submitHandle}>
                      <label>
-                        <span>Título para a foto</span>
+                        <span>Título para a foto:</span>
                         <input
                            type="text"
                            placeholder="Insira um título"
                            onChange={e => setTitle(e.target.value)}
                            value={title || ''}
+                           required
                         />
                      </label>
+                     
                      <label>
                         <span>Imagem:</span>
                         <input 
                            type="file" 
                            onChange={handleFile}
-                           accept="image/*" 
+                           accept="image/*"
+                           required 
                         />
                      </label>
 
                      {loadingPhoto ? (
-                        <input type="submit" disabled value="Aguarde..." />
+                        <button type="button" disabled className="btn">
+                           <span className="spinner"></span> Enviando...
+                        </button>
                      ) : (
-                        <input type="submit" value="Postar" />
-                     )}
-                     
-                     {/* Mostrar mensagens de sucesso/erro */}
-                     {messagePhoto && (
-                        <Message msg={messagePhoto} type="success" />
-                     )}
-                     {errorPhoto && (
-                        <Message msg={errorPhoto} type="error" />
+                        <button type="submit" className="btn">
+                           Postar Foto
+                        </button>
                      )}
                   </form>
+                  
+                  {/* Mostrar mensagens - AGORA COM MENSAGEM LOCAL TAMBÉM */}
+                  <div className="messages-container">
+                     {localSuccess && (
+                        <Message 
+                           msg={localSuccess} 
+                           type="success" 
+                           onClose={handleCloseMessage}
+                        />
+                     )}
+                     
+                     {messagePhoto && !localSuccess && (
+                        <Message 
+                           msg={messagePhoto} 
+                           type="success" 
+                           onClose={handleCloseMessage}
+                        />
+                     )}
+                     
+                     {errorPhoto && (
+                        <Message 
+                           msg={errorPhoto} 
+                           type="error" 
+                           onClose={handleCloseMessage}
+                        />
+                     )}
+                  </div>
                </div>
 
                {/* Mostrar fotos do usuário */}
                <div className="user-photos">
                   <h3>Minhas Fotos ({photos.length})</h3>
-                  {photos.length === 0 ? (
+                  {loadingPhoto ? (
+                     <p>Carregando fotos...</p>
+                  ) : photos.length === 0 ? (
                      <p>Você ainda não postou fotos.</p>
                   ) : (
                      <div className="photos-container">
-                        {/* Aqui você pode mapear as fotos */}
                         {photos.map(photo => (
                            <div key={photo._id} className="photo-item">
                               <img 
                                  src={`${uploads}/photos/${photo.image}`} 
-                                 alt={photo.title} 
+                                 alt={photo.title}
+                                 onError={(e) => {
+                                    e.target.src = '/default-image.png';
+                                 }}
                               />
-                              <p>{photo.title}</p>
+                              <p className="photo-title">{photo.title}</p>
+                              <small>
+                                 {new Date(photo.createdAt).toLocaleDateString()}
+                              </small>
                            </div>
                         ))}
                      </div>
@@ -217,13 +296,6 @@ const Profile = () => {
                </div>
             </>
          )}
-
-         {/* Remova o debug-info em produção */}
-         {/* <div className="debug-info">
-            <p>É meu perfil? {isMyProfile ? 'Sim' : 'Não'}</p>
-            <p>ID: {userToShow._id}</p>
-            {!isMyProfile && <p>Visitando perfil de: {userToShow.name}</p>}
-         </div> */}
       </div>
    );
 };
