@@ -1,23 +1,46 @@
-import { data } from 'react-router-dom';
 import { api, requestConfig } from '../utils/config';
 
-// publish an user photo
+// Publish an user photo
 const publishPhoto = async (data, token) => {
    const config = requestConfig('POST', data, token, true);
 
    try {
-      const res = await fetch(api + '/photos', config)
-         .then(res => res.json())
-         .catch(err => err);
+      const response = await fetch(api + '/photos', config);
 
-      return res;
+      if (!response.ok) {
+         throw new Error(`Erro HTTP: ${response.status}`);
+      }
+
+      const result = await response.json();
+      return result;
    } catch (error) {
-      console.log(error);
+      return { errors: [error.message] };
+   }
+};
+
+// Get user photos
+const getUserPhotos = async (id, token) => {
+   const config = requestConfig('GET', null, token);
+
+   try {
+      const response = await fetch(api + '/photos/user/' + id, config);
+
+      if (!response.ok) {
+         const errorText = await response.text();
+         throw new Error(`Erro HTTP ${response.status}: ${errorText}`);
+      }
+
+      const data = await response.json();
+
+      return data;
+   } catch (error) {
+      return []; // Retorna array vazio em caso de erro
    }
 };
 
 const photoService = {
-   publishPhoto
+   publishPhoto,
+   getUserPhotos
 };
 
 export default photoService;

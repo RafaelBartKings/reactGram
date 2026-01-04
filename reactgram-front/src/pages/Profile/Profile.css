@@ -1,249 +1,448 @@
-/* SEU CSS ATUAL (mantenha tudo isso) */
+/* Profile.css - VERSÃO CORRIGIDA (sem cortar foto) */
+
 #profile {
-   width: 50%;
-   margin: 0 auto;
-   padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
 }
 
+/* Profile Header */
 .profile-header {
-   display: flex;
-   align-items: center;
-   flex-wrap: wrap;
-   gap: 30px;
-   padding: 1em;
-   border-bottom: 1px solid #363636;
+  display: flex;
+  align-items: center;
+  gap: 30px;
+  margin-bottom: 40px;
+  padding: 25px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 15px;
+  color: white;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
 }
 
 .profile-avatar {
-   width: 150px;
-   height: 150px;
-   border-radius: 50%;
-   object-fit: cover;
-   border: 3px solid #007bff;
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  border: 5px solid rgba(255, 255, 255, 0.3);
+  object-fit: cover;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
 }
 
 .profile-description {
-   flex: 1;
+  flex: 1;
 }
 
 .profile-description h2 {
-   margin: 0 0 10px 0;
-   color: #333;
+  margin: 0 0 10px 0;
+  font-size: 2.2rem;
+  font-weight: 700;
 }
 
-.profile-description .bio {
-   color: #666;
-   font-size: 16px;
-   line-height: 1.5;
-   margin-bottom: 10px;
+.bio {
+  font-size: 1.1rem;
+  opacity: 0.9;
+  margin: 15px 0;
+  line-height: 1.6;
 }
 
-.profile-description .email {
-   color: #888;
-   font-size: 14px;
-   margin-bottom: 15px;
+.email {
+  background: rgba(255, 255, 255, 0.2);
+  padding: 8px 15px;
+  border-radius: 20px;
+  display: inline-block;
+  margin: 10px 0;
+  font-size: 0.9rem;
 }
 
 .btn-edit {
-   display: inline-flex;
-   align-items: center;
-   gap: 8px;
-   background: #007bff;
-   color: white;
-   padding: 8px 16px;
-   border-radius: 4px;
-   text-decoration: none;
-   font-size: 14px;
-   transition: background 0.3s;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: white;
+  color: #667eea;
+  padding: 12px 25px;
+  border-radius: 25px;
+  text-decoration: none;
+  font-weight: 600;
+  margin-top: 15px;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
 }
 
 .btn-edit:hover {
-   background: #0056b3;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+  background: #f8f9fa;
 }
 
-.loading-container {
-   text-align: center;
-   padding: 50px;
-   font-size: 18px;
-   color: #666;
-}
-
-.btn {
-   display: inline-block;
-   background: #6c757d;
-   color: white;
-   padding: 10px 20px;
-   border-radius: 4px;
-   text-decoration: none;
-   margin-top: 15px;
-}
-
-.btn:hover {
-   background: #545b62;
-}
-
-/* AGORA ADICIONE ESTAS NOVAS REGRAS NO FINAL */
-
-/* Preview da imagem */
-.image-preview {
-   margin: 15px 0;
-   text-align: center;
-}
-
-.preview-label {
-   display: block;
-   color: #666;
-   margin-top: 8px;
-   font-size: 14px;
-}
-
-.preview-image-container {
-   display: inline-block;
-   max-width: 200px;
-   max-height: 150px;
-   overflow: hidden;
-   border-radius: 4px;
-   border: 1px solid #ddd;
-   background: #f9f9f9;
-   padding: 5px;
-}
-
-.preview-image {
-   max-width: 100%;
-   max-height: 140px;
-   display: block;
-   object-fit: contain;
-}
-
-/* Formulário */
+/* New Photo Section */
 .new-photo {
-   margin: 30px 0;
-   padding: 1em;
-   border-bottom: 1px solid #363636;
+  background: white;
+  padding: 30px;
+  border-radius: 15px;
+  margin-bottom: 40px;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
 }
 
 .new-photo h3 {
-   margin: 0 0 20px 0;
-   color: #333;
+  margin-top: 0;
+  color: #333;
+  font-size: 1.5rem;
+  margin-bottom: 25px;
+  padding-bottom: 15px;
+  border-bottom: 2px solid #f0f0f0;
 }
 
-.new-photo form {
-   display: flex;
-   flex-direction: column;
-   gap: 15px;
-   margin-top: 20px;
+/* Image Preview */
+.image-preview {
+  margin-bottom: 25px;
+  background: #f8f9fa;
+  padding: 20px;
+  border-radius: 10px;
+  border: 2px dashed #dee2e6;
 }
 
-.new-photo label {
-   display: flex;
-   flex-direction: column;
-   gap: 5px;
+.preview-image-container {
+  max-width: 300px;
+  margin: 0 auto 15px;
 }
 
-.new-photo label span {
-   color: #333;
-   font-size: 14px;
+.preview-image {
+  width: 100%;
+  height: 200px;
+  object-fit: contain; /* ✅ Mudado de 'cover' para 'contain' */
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  background: #f5f5f5; /* Fundo para áreas vazias */
 }
 
-.new-photo input[type="text"] {
-   padding: 8px 10px;
-   border: 1px solid #ddd;
-   border-radius: 4px;
-   font-size: 14px;
+.preview-label {
+  text-align: center;
+  color: #666;
+  font-size: 0.9rem;
+  margin: 0;
 }
 
-.new-photo input[type="file"] {
-   padding: 6px;
-   border: 1px solid #ddd;
-   border-radius: 4px;
-   background: #f9f9f9;
+/* Form */
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 }
 
-.new-photo button {
-   background: #007bff;
-   color: white;
-   padding: 10px 20px;
-   border: none;
-   border-radius: 4px;
-   cursor: pointer;
-   font-size: 16px;
-   transition: background 0.3s;
-   margin-top: 10px;
+label {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
-.new-photo button:hover:not(:disabled) {
-   background: #0056b3;
+label span {
+  font-weight: 600;
+  color: #333;
+  font-size: 1rem;
 }
 
-.new-photo button:disabled {
-   background: #6c757d;
-   cursor: not-allowed;
+input[type="text"],
+input[type="file"] {
+  padding: 12px 15px;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: border-color 0.3s ease;
 }
 
-/* Mensagens */
-.messages-container {
-   margin-top: 15px;
+input[type="text"]:focus {
+  outline: none;
+  border-color: #667eea;
 }
 
-/* Galeria de fotos */
-.user-photos {
-   margin: 30px 0;
-   padding: 1em;
-   border-top: 1px solid #363636;
+input[type="file"] {
+  padding: 10px;
+  background: #f8f9fa;
+  cursor: pointer;
 }
 
-.user-photos h3 {
-   margin: 0 0 20px 0;
-   color: #333;
+/* Button */
+.btn {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  padding: 14px 30px;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 10px;
 }
 
-.photos-container {
-   display: grid;
-   grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-   gap: 15px;
+.btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 7px 20px rgba(102, 126, 234, 0.4);
 }
 
-.photo-item {
-   background: white;
-   border: 1px solid #ddd;
-   border-radius: 4px;
-   overflow: hidden;
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
 }
 
-.photo-item img {
-   width: 100%;
-   height: 150px;
-   object-fit: cover;
-}
-
-.photo-title {
-   padding: 10px;
-   margin: 0;
-   color: #333;
-   font-size: 14px;
-   text-align: center;
-}
-
-.photo-item small {
-   display: block;
-   padding: 0 10px 10px;
-   color: #666;
-   font-size: 11px;
-   text-align: center;
-}
-
-/* Spinner */
 .spinner {
-   display: inline-block;
-   width: 16px;
-   height: 16px;
-   border: 2px solid rgba(255,255,255,0.3);
-   border-radius: 50%;
-   border-top-color: white;
-   animation: spin 1s linear infinite;
-   margin-right: 8px;
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border: 3px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  border-top-color: white;
+  animation: spin 1s ease-in-out infinite;
 }
 
 @keyframes spin {
-   to { transform: rotate(360deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* Messages */
+.messages-container {
+  margin-top: 20px;
+}
+
+/* User Photos Section */
+.user-photos {
+  margin-top: 40px;
+}
+
+.user-photos h3 {
+  color: #333;
+  font-size: 1.8rem;
+  margin-bottom: 25px;
+  padding-bottom: 15px;
+  border-bottom: 2px solid #f0f0f0;
+}
+
+.photos-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 25px;
+  margin-top: 20px;
+}
+
+/* Photo Item - CORREÇÃO PRINCIPAL */
+.photo-item {
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  height: 100%; /* ✅ Garante que o item ocupe altura total */
+}
+
+.photo-item:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+}
+
+/* Container da imagem com altura fixa */
+.photo-image-container {
+  width: 100%;
+  height: 250px; /* ✅ Altura fixa para todas as imagens */
+  overflow: hidden;
+  position: relative;
+  background: #f8f9fa; /* Fundo para áreas vazias */
+}
+
+.photo-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain; /* ✅ Mudado de 'cover' para 'contain' - NÃO CORTA */
+  display: block;
+  transition: transform 0.3s ease;
+}
+
+.photo-item:hover img {
+  transform: scale(1.05); /* Efeito de zoom no hover */
+}
+
+/* Conteúdo da foto - agora abaixo da imagem */
+.photo-content {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1; /* ✅ Ocupa espaço restante */
+}
+
+.photo-title {
+  margin: 0 0 10px 0;
+  font-weight: 600;
+  color: #333;
+  font-size: 1.1rem;
+  line-height: 1.4;
+  /* ✅ Limita a 2 linhas com ellipsis se necessário */
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.photo-date {
+  color: #666;
+  font-size: 0.85rem;
+  margin-top: auto; /* ✅ Empurra para o final do container */
+  padding-top: 10px;
+  border-top: 1px solid #f0f0f0;
+}
+
+/* View Button */
+.btn-view {
+  display: block;
+  margin-top: 15px;
+  padding: 10px 20px;
+  background: #f8f9fa;
+  color: #667eea;
+  text-align: center;
+  text-decoration: none;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+  border: none;
+  cursor: pointer;
+  width: 100%;
+}
+
+.btn-view:hover {
+  background: #667eea;
+  color: white;
+  transform: translateY(-2px);
+}
+
+/* Loading State */
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 300px;
+  gap: 20px;
+}
+
+.loading-container p {
+  font-size: 1.2rem;
+  color: #666;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  #profile {
+    padding: 15px;
+  }
+  
+  .profile-header {
+    flex-direction: column;
+    text-align: center;
+    gap: 20px;
+    padding: 20px;
+  }
+  
+  .profile-avatar {
+    width: 120px;
+    height: 120px;
+  }
+  
+  .profile-description h2 {
+    font-size: 1.8rem;
+  }
+  
+  .photos-container {
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 20px;
+  }
+  
+  .photo-image-container {
+    height: 220px; /* ✅ Altura menor em mobile */
+  }
+  
+  .new-photo {
+    padding: 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .photos-container {
+    grid-template-columns: 1fr;
+  }
+  
+  .profile-avatar {
+    width: 100px;
+    height: 100px;
+  }
+  
+  .btn-edit,
+  .btn {
+    width: 100%;
+    justify-content: center;
+  }
+  
+  .photo-image-container {
+    height: 200px; /* ✅ Altura ainda menor em telas pequenas */
+  }
+}
+
+/* Empty State */
+.user-photos > p {
+  text-align: center;
+  color: #666;
+  font-size: 1.1rem;
+  padding: 40px 20px;
+  background: #f8f9fa;
+  border-radius: 10px;
+  border: 2px dashed #dee2e6;
+}
+
+/* Photo Actions (future feature) */
+.photo-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 15px;
+}
+
+.btn-small {
+  padding: 6px 12px;
+  font-size: 0.85rem;
+  border-radius: 4px;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.2s ease;
+  flex: 1;
+}
+
+.btn-small:first-child {
+  background: #e3f2fd;
+  color: #1976d2;
+}
+
+.btn-small.btn-danger {
+  background: #ffebee;
+  color: #d32f2f;
+}
+
+.btn-small:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+/* Tratamento especial para imagens muito altas ou muito largas */
+.photo-image-container.tall-image img {
+  object-fit: cover; /* ✅ Para fotos muito altas, usa cover mas não corta os lados */
+}
+
+.photo-image-container.wide-image img {
+  object-fit: contain; /* ✅ Para fotos muito largas, mantém proporção */
 }

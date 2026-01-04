@@ -7,6 +7,6 @@ export const store = configureStore({
    reducer: {
       auth: authReducer,
       user: userReducer, // Agora apontando para o seu próprio userSlice
-      photoReducer: photoReducer
+      photo: photoReducer
    }
 });
