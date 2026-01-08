@@ -1,0 +1,17 @@
+.photo-item img {
+	 max-width: 600px;
+	 margin: 20px auto;
+
+ }
+
+ #home .photo-item h2 {
+	 margin-bottom: .2em;
+ }
+
+ .photo-author {
+	 text-align: ce;
+ }
+
+  .photo-author a {
+	  font-weight: bold;
+ }

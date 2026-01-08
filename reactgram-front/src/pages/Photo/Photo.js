@@ -5,6 +5,7 @@ import { uploads } from '../../utils/config';
 // components
 import Message from '../../components/Message';
 import { Link } from 'react-router-dom';
+import PhotoItem from '../../components/PhotoItem';
 
 // hooks
 import { useEffect, useState } from 'react';
@@ -29,11 +30,15 @@ const Photo = () => {
    }, [dispatch, id]);
 
    // like e comentario
-   if(loading) {
+   if (loading) {
       return <p>Carregando...</p>;
    }
 
-   return <div>Photo!</div>;
+   return (
+      <div id="photo">
+         <PhotoItem photo={photo}></PhotoItem>
+      </div>
+   );
 };
 
 export default Photo;
