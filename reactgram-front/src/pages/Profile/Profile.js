@@ -1,11 +1,15 @@
-// Profile.js - VERSÃO ATUALIZADA (com estrutura correta para o CSS)
+// Profile.js - VERSÃO COM AÇÕES NAS FOTOS
 import './Profile.css';
 
 import { uploads } from '../../utils/config';
 import Message from '../../components/Message';
 import { Link, useParams, useNavigate } from 'react-router-dom';
 
-import { BsPencilFill } from 'react-icons/bs';
+import { 
+  BsPencilFill, 
+  BsFillEyeFill, 
+  BsXLg 
+} from 'react-icons/bs';
 import { useSelector, useDispatch } from 'react-redux';
 import { getUserDetails } from '../../slices/userSlice';
 import { useEffect, useRef, useState, useMemo } from 'react';
@@ -13,7 +17,9 @@ import {
    publishPhoto,
    resetMessage,
    getUserPhotos,
-   resetPhotos
+   resetPhotos,
+   deletePhoto,
+   updatePhoto
 } from '../../slices/photoSlice';
 
 const Profile = () => {
@@ -40,6 +46,8 @@ const Profile = () => {
    const [image, setImage] = useState('');
    const [preview, setPreview] = useState('');
    const [localSuccess, setLocalSuccess] = useState('');
+   const [editingPhoto, setEditingPhoto] = useState(null);
+   const [editTitle, setEditTitle] = useState('');
 
    // Cálculos memoizados
    const isMyProfile = useMemo(() => {
@@ -128,6 +136,74 @@ const Profile = () => {
          }
       } catch (error) {
          console.error('Erro ao publicar foto:', error);
+      }
+   };
+
+   // ✅ Função para visualizar foto
+   const handleViewPhoto = (photoId) => {
+      navigate(`/photos/${photoId}`);
+   };
+
+   // ✅ Função para iniciar edição
+   const handleStartEdit = (photo) => {
+      setEditingPhoto(photo._id);
+      setEditTitle(photo.title);
+   };
+
+   // ✅ Função para salvar edição
+   const handleSaveEdit = async (photoId) => {
+      if (!editTitle.trim()) {
+         alert('Digite um título para a foto!');
+         return;
+      }
+
+      try {
+         const result = await dispatch(updatePhoto({
+            id: photoId,
+            title: editTitle
+         }));
+
+         if (updatePhoto.fulfilled.match(result)) {
+            setEditingPhoto(null);
+            setEditTitle('');
+            
+            // Recarregar fotos
+            setTimeout(() => {
+               if (userAuth?._id) {
+                  dispatch(getUserPhotos(userAuth._id));
+               }
+            }, 500);
+         }
+      } catch (error) {
+         console.error('Erro ao editar foto:', error);
+      }
+   };
+
+   // ✅ Função para cancelar edição
+   const handleCancelEdit = () => {
+      setEditingPhoto(null);
+      setEditTitle('');
+   };
+
+   // ✅ Função para deletar foto
+   const handleDeletePhoto = async (photoId) => {
+      if (!window.confirm('Tem certeza que deseja excluir esta foto?')) {
+         return;
+      }
+
+      try {
+         const result = await dispatch(deletePhoto(photoId));
+
+         if (deletePhoto.fulfilled.match(result)) {
+            // Recarregar fotos
+            setTimeout(() => {
+               if (userAuth?._id) {
+                  dispatch(getUserPhotos(userAuth._id));
+               }
+            }, 500);
+         }
+      } catch (error) {
+         console.error('Erro ao excluir foto:', error);
       }
    };
 
@@ -278,7 +354,7 @@ const Profile = () => {
             </div>
          )}
 
-         {/* Seção de fotos - ESTRUTURA ATUALIZADA PARA O CSS */}
+         {/* Seção de fotos - COM AÇÕES */}
          <div className="user-photos">
             <h3>
                {isMyProfile 
@@ -300,7 +376,7 @@ const Profile = () => {
                <div className="photos-container">
                   {photos.map(photo => (
                      <div key={photo._id} className="photo-item">
-                        {/* ✅ Container da imagem com altura fixa */}
+                        {/* Container da imagem */}
                         <div className="photo-image-container">
                            <img
                               src={`${uploads}/photos/${photo.image}`}
@@ -311,18 +387,75 @@ const Profile = () => {
                            />
                         </div>
                         
-                        {/* ✅ Conteúdo da foto */}
+                        {/* Conteúdo da foto */}
                         <div className="photo-content">
-                           <p className="photo-title">{photo.title}</p>
-                           
-                           {/* ✅ Botão apenas para outros perfis */}
-                           {!isMyProfile && (
-                              <Link 
-                                 className="btn btn-view" 
-                                 to={`/photos/${photo._id}`}
-                              >
-                                 Ver detalhes
-                              </Link>
+                           {/* Modo edição ou visualização normal */}
+                           {editingPhoto === photo._id ? (
+                              <div className="edit-form">
+                                 <input
+                                    type="text"
+                                    value={editTitle}
+                                    onChange={(e) => setEditTitle(e.target.value)}
+                                    className="edit-input"
+                                    placeholder="Novo título"
+                                 />
+                                 <div className="edit-actions">
+                                    <button 
+                                       onClick={() => handleSaveEdit(photo._id)}
+                                       className="btn-small btn-save"
+                                    >
+                                       Salvar
+                                    </button>
+                                    <button 
+                                       onClick={handleCancelEdit}
+                                       className="btn-small btn-cancel"
+                                    >
+                                       Cancelar
+                                    </button>
+                                 </div>
+                              </div>
+                           ) : (
+                              <>
+                                 <p className="photo-title">{photo.title}</p>
+                                 
+                                 {/* ✅ Ações da foto */}
+                                 <div className="photo-actions">
+                                    {/* Para o próprio perfil */}
+                                    {isMyProfile ? (
+                                       <>
+                                          <button 
+                                             onClick={() => handleViewPhoto(photo._id)}
+                                             className="btn-action"
+                                             title="Visualizar"
+                                          >
+                                             <BsFillEyeFill />
+                                          </button>
+                                          <button 
+                                             onClick={() => handleStartEdit(photo)}
+                                             className="btn-action"
+                                             title="Editar"
+                                          >
+                                             <BsPencilFill />
+                                          </button>
+                                          <button 
+                                             onClick={() => handleDeletePhoto(photo._id)}
+                                             className="btn-action"
+                                             title="Excluir"
+                                          >
+                                             <BsXLg />
+                                          </button>
+                                       </>
+                                    ) : (
+                                       /* Para outros perfis */
+                                       <Link 
+                                          className="btn btn-view-full" 
+                                          to={`/photos/${photo._id}`}
+                                       >
+                                          <BsFillEyeFill /> Ver detalhes
+                                       </Link>
+                                    )}
+                                 </div>
+                              </>
                            )}
                         </div>
                      </div>

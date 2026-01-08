@@ -77,7 +77,7 @@
 
 /* New Photo Section */
 .new-photo {
-  background: white;
+  background: black;
   padding: 30px;
   border-radius: 15px;
   margin-bottom: 40px;
@@ -232,7 +232,7 @@ input[type="file"] {
 
 /* Photo Item - CORREÇÃO PRINCIPAL */
 .photo-item {
-  background: white;
+  background: black;
   border-radius: 12px;
   overflow: hidden;
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
@@ -446,3 +446,164 @@ input[type="file"] {
 .photo-image-container.wide-image img {
   object-fit: contain; /* ✅ Para fotos muito largas, mantém proporção */
 }
+
+/* AÇÕES DAS FOTOS - Adicione ao final do seu Profile.css */
+
+/* Container de ações */
+.photo-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 15px;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Botões de ação individuais */
+.btn-action {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 1.2rem;
+}
+
+.btn-view {
+  background: #e3f2fd;
+  color: #1976d2;
+}
+
+.btn-edit-photo {
+  background: #fff3e0;
+  color: #f57c00;
+}
+
+.btn-delete {
+  background: #ffebee;
+  color: #d32f2f;
+}
+
+.btn-action:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.btn-view:hover {
+  background: #1976d2;
+  color: white;
+}
+
+.btn-edit-photo:hover {
+  background: #f57c00;
+  color: white;
+}
+
+.btn-delete:hover {
+  background: #d32f2f;
+  color: white;
+}
+
+/* Botão "Ver detalhes" completo (para outros perfis) */
+.btn-view-full {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 20px;
+  background: #f8f9fa;
+  color: #667eea;
+  text-decoration: none;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+  border: none;
+  cursor: pointer;
+  width: 100%;
+  margin-top: 15px;
+}
+
+.btn-view-full:hover {
+  background: #667eea;
+  color: white;
+  transform: translateY(-2px);
+}
+
+/* Formulário de edição */
+.edit-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.edit-input {
+  padding: 10px 15px;
+  border: 2px solid #e0e0e0;
+  border-radius: 6px;
+  font-size: 1rem;
+  width: 90%;
+}
+
+.edit-input:focus {
+  outline: none;
+  border-color: #667eea;
+}
+
+.edit-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.btn-small {
+  padding: 8px 15px;
+  border: none;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  flex: 1;
+}
+
+.btn-save {
+  background: #4caf50;
+  color: white;
+}
+
+.btn-save:hover {
+  background: #388e3c;
+  transform: translateY(-1px);
+}
+
+.btn-cancel {
+  background: #f5f5f5;
+  color: #666;
+}
+
+.btn-cancel:hover {
+  background: #e0e0e0;
+  transform: translateY(-1px);
+}
+
+/* Responsivo para ações */
+@media (max-width: 480px) {
+  .btn-action {
+    width: 35px;
+    height: 35px;
+    font-size: 1rem;
+  }
+  
+  .edit-actions {
+    flex-direction: column;
+  }
+  
+  .btn-small {
+    padding: 10px;
+  }
+}
+

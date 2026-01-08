@@ -38,9 +38,49 @@ const getUserPhotos = async (id, token) => {
    }
 };
 
+const deletePhoto = async (id, token) => {
+   const config = requestConfig('DELETE', null, token);
+
+   try {
+      const res = await fetch(api + '/photos/' + id, config);
+      const data = await res.json();
+      return data;
+   } catch (error) {
+      console.log(error);
+   }
+};
+
+const updatePhoto = async (id, data, token) => {
+   const config = requestConfig('PUT', data, token);
+
+   try {
+      const res = await fetch(api + '/photos/' + id, config);
+      const result = await res.json();
+      return result;
+   } catch (error) {
+      console.log(error);
+   }
+};
+
+// Get a photo by id
+const getPhoto = async (id, token) => {
+   const config = requestConfig('GET', null, token);
+
+   try {
+      const res = await fetch(api + '/photos/' + id, config);
+      const result = await res.json();
+      return result;
+   } catch (error) {
+      console.log(error);
+   }
+};
+
 const photoService = {
    publishPhoto,
-   getUserPhotos
+   getUserPhotos,
+   deletePhoto,
+   updatePhoto,
+   getPhoto
 };
 
 export default photoService;
