@@ -75,12 +75,63 @@ const getPhoto = async (id, token) => {
    }
 };
 
+// Like photo
+
+// Like photo - VERSÃO QUE BUSCA A FOTO ATUALIZADA
+const like = async (id, token) => {
+   const config = {
+      method: 'PUT',
+      headers: {
+         'Content-Type': 'application/json',
+         Authorization: `Bearer ${token}`
+      },
+      body: JSON.stringify({})
+   };
+
+   try {
+      const url = `${api}/photos/like/${id}`;
+      const res = await fetch(url, config);
+      const result = await res.json();
+
+      // Se for sucesso (200) mas não tem os dados completos
+      if (res.ok) {
+         // Busca a foto atualizada
+         const photoResponse = await fetch(`${api}/photos/${id}`, {
+            headers: {
+               Authorization: `Bearer ${token}`
+            }
+         });
+
+         if (photoResponse.ok) {
+            const photoData = await photoResponse.json();
+            return photoData; // Retorna a foto completa
+         }
+      }
+
+      // Se for erro 422, retorna o resultado para tratamento
+      if (res.status === 422) {
+         console.log('Usuário já deu like');
+         return result;
+      }
+
+      if (!res.ok) {
+         throw new Error(result.message || `Erro ${res.status}`);
+      }
+
+      return result;
+   } catch (error) {
+      console.error('Erro no like:', error);
+      throw error;
+   }
+};
+
 const photoService = {
    publishPhoto,
    getUserPhotos,
    deletePhoto,
    updatePhoto,
-   getPhoto
+   getPhoto,
+   like
 };
 
 export default photoService;

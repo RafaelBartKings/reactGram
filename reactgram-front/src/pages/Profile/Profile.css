@@ -224,10 +224,11 @@ input[type="file"] {
 }
 
 .photos-container {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 25px;
+  display: flex;
+  flex-wrap: wrap; 
+  justify-content: center; 
   margin-top: 20px;
+  align-items: center;
 }
 
 /* Photo Item - CORREÇÃO PRINCIPAL */
@@ -240,6 +241,8 @@ input[type="file"] {
   display: flex;
   flex-direction: column;
   height: 100%; /* ✅ Garante que o item ocupe altura total */
+
+  
 }
 
 .photo-item:hover {
@@ -253,7 +256,11 @@ input[type="file"] {
   height: 250px; /* ✅ Altura fixa para todas as imagens */
   overflow: hidden;
   position: relative;
-  background: #f8f9fa; /* Fundo para áreas vazias */
+  
+  /* Centraliza a imagem dentro do container */
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .photo-item img {

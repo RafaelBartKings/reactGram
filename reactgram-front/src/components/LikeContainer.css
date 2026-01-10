@@ -1,0 +1,22 @@
+.like {
+	display: flex;
+	align-items: center;
+	justify-content: left;
+}
+
+#home .like {
+	border: none;
+}
+
+.like svg {
+	font-size: 1.5em;
+	width: 24px;
+	height: 24px;
+	margin: 10px;
+	cursor: pointer;
+	fill: #fff;
+}
+
+.like p {
+	margin-left: 1em;
+}

@@ -90,12 +90,34 @@ export const getPhoto = createAsyncThunk(
    }
 );
 
+export const likePhoto = createAsyncThunk(
+   'photo/like',
+   async (id, thunkAPI) => {
+      const token = thunkAPI.getState().auth.user.token;
+
+      if (!token) {
+         return thunkAPI.rejectWithValue('Usuário não autenticado');
+      }
+
+      try {
+         const data = await photoService.like(id, token);
+
+         if (data.errors) {
+            return thunkAPI.rejectWithValue(data.errors[0]);
+         }
+
+         return data;
+      } catch (error) {
+         return thunkAPI.rejectWithValue(error.message || 'Erro ao dar like');
+      }
+   }
+);
+
 export const photoSlice = createSlice({
    name: 'photo',
    initialState,
    reducers: {
       resetMessage: state => {
-         console.log('🗑️ Reducer: resetMessage');
          state.message = null;
       },
       resetPhotos: state => {
@@ -138,12 +160,6 @@ export const photoSlice = createSlice({
             const newPhotos = Array.isArray(action.payload)
                ? action.payload
                : [];
-            console.log(
-               '🔄 Atualizando photos de',
-               state.photos.length,
-               'para',
-               newPhotos.length
-            );
 
             state.photos = newPhotos;
          })
@@ -199,6 +215,56 @@ export const photoSlice = createSlice({
             state.success = true;
             state.error = false;
             state.photo = action.payload;
+         })
+         // photoSlice.js - Atualize o reducer do likePhoto.fulfilled
+         .addCase(likePhoto.fulfilled, (state, action) => {
+
+            state.loading = false;
+            state.success = true;
+            state.error = null;
+
+            const updatedPhoto = action.payload;
+
+            if (!updatedPhoto || !updatedPhoto._id) {
+               console.error('Payload inválido no like');
+               return;
+            }
+
+            // Atualiza a foto individual (se estiver visualizando uma foto)
+            if (state.photo && state.photo._id === updatedPhoto._id) {
+               state.photo = {
+                  ...state.photo,
+                  likes: updatedPhoto.likes || [],
+                  likedByUser:
+                     updatedPhoto.likes?.includes(updatedPhoto.userId) || false
+               };
+            }
+
+            // Atualiza a foto na lista de fotos (se existir)
+            if (state.photos && Array.isArray(state.photos)) {
+               state.photos = state.photos.map(photo => {
+                  if (photo._id === updatedPhoto._id) {
+                     return {
+                        ...photo,
+                        likes: updatedPhoto.likes || [],
+                        likedByUser:
+                           updatedPhoto.likes?.includes(photo.userId) || false
+                     };
+                  }
+                  return photo;
+               });
+            }
+
+            state.message =
+               updatedPhoto.likes?.length > state.photo?.likes?.length
+                  ? 'Like adicionado!'
+                  : 'Like removido!';
+         })
+         .addCase(likePhoto.rejected, (state, action) => {
+            state.loading = false;
+            state.error = action.payload;
+            state.success = false;
+            state.message = action.payload || 'Erro ao dar like';
          });
    }
 });
