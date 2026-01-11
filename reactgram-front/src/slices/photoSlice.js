@@ -3,6 +3,8 @@ import photoService from '../services/photoService';
 
 const initialState = {
    photos: [],
+   searchResults: [],
+   showingSearchResults: false,
    photo: {
       comments: []
    },
@@ -166,6 +168,55 @@ export const getPhotos = createAsyncThunk(
                error.message ||
                'Erro ao buscar fotos'
          );
+      }
+   }
+);
+
+export const searchPhotos = createAsyncThunk(
+   'photo/search',
+   async (query, thunkAPI) => {
+      const state = thunkAPI.getState();
+      const token = state.auth.user?.token;
+
+      // Verificação mais completa
+      if (!token) {
+         return thunkAPI.rejectWithValue({
+            message: 'Usuário não autenticado',
+            code: 'UNAUTHORIZED'
+         });
+      }
+
+      // Validação do query
+      if (!query || query.trim().length === 0) {
+         return thunkAPI.rejectWithValue({
+            message: 'Termo de busca não pode estar vazio',
+            code: 'EMPTY_QUERY'
+         });
+      }
+
+      try {
+         console.log(`🔍 Buscando fotos com query: "${query}"`);
+
+         const data = await photoService.searchPhotos(query, token);
+
+         // Log para debug
+         console.log(`📊 Resultados encontrados: ${data.length || 0} fotos`);
+
+         return data;
+      } catch (error) {
+         // Tratamento de erro mais robusto
+         const errorData = {
+            message:
+               error.response?.data?.message ||
+               error.message ||
+               'Erro ao buscar fotos',
+            code: error.response?.status || 'NETWORK_ERROR',
+            query: query
+         };
+
+         console.error('❌ Erro na busca:', errorData);
+
+         return thunkAPI.rejectWithValue(errorData);
       }
    }
 );
@@ -420,6 +471,35 @@ export const photoSlice = createSlice({
             state.success = false;
             state.error = action.payload || 'Erro ao carregar fotos';
             state.photos = []; // Limpa a lista em caso de erro
+         })
+         // No photoSlice.js - extraReducers
+         .addCase(searchPhotos.pending, state => {
+            state.loading = true;
+            state.error = false;
+            state.success = false;
+            state.searchResults = []; // Adicione este campo ao initialState se quiser separar
+         })
+         .addCase(searchPhotos.fulfilled, (state, action) => {
+            state.loading = false;
+            state.success = true;
+            state.error = false;
+
+            // Opção A: Substitui todas as fotos pelos resultados
+            state.photos = Array.isArray(action.payload) ? action.payload : [];
+
+            state.message = `Encontradas ${action.payload?.length || 0} fotos`;
+         })
+         .addCase(searchPhotos.rejected, (state, action) => {
+            state.loading = false;
+            state.success = false;
+            state.error = action.payload?.message || action.payload;
+
+            // Se for erro de query vazia, não limpa resultados
+            if (action.payload?.code !== 'EMPTY_QUERY') {
+               state.photos = []; // Ou state.searchResults = []
+            }
+
+            state.message = action.payload?.message || 'Erro na busca';
          });
    }
 });

@@ -140,15 +140,42 @@ const comment = async (dataComment, id, token) => {
 
 // Get all photos
 
-const getPhotos = async (token) => {
+const getPhotos = async token => {
    const config = requestConfig('GET', null, token);
    try {
       const res = await fetch(api + '/photos', config);
       const data = await res.json();
       return data;
-   }
-   catch (error) {
+   } catch (error) {
       console.log(error);
+   }
+};
+
+// Search photo by title
+const searchPhotos = async (query, token) => {
+   const config = {
+      method: 'GET',
+      headers: {
+         'Content-Type': 'application/json',
+         Authorization: `Bearer ${token}`
+      }
+   };
+
+   // Encode o query para URL
+   const encodedQuery = encodeURIComponent(query);
+
+   try {
+      const res = await fetch(`${api}/photos/search?q=${encodedQuery}`, config);
+
+      if (!res.ok) {
+         const errorData = await res.json().catch(() => ({}));
+         throw new Error(errorData.message || `Erro HTTP: ${res.status}`);
+      }
+
+      return await res.json();
+   } catch (error) {
+      console.error('Erro no service searchPhotos:', error);
+      throw error;
    }
 };
 
@@ -160,7 +187,8 @@ const photoService = {
    getPhoto,
    like,
    comment,
-   getPhotos
+   getPhotos,
+   searchPhotos
 };
 
 export default photoService;
