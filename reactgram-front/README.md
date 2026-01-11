@@ -1,70 +1,152 @@
-# Getting Started with Create React App
+📸 ReactGram - Rede Social de Fotos
+Uma aplicação web moderna para compartilhar e explorar fotos, construída com React, Redux e Node.js.
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+🚀 Funcionalidades Principais
+✅ Autenticação de usuários - Cadastro e login seguro
+✅ Upload de fotos - Poste suas melhores imagens
+✅ Curtir fotos - Interaja com as publicações
+✅ Comentários - Deixe sua opinião nas fotos
+✅ Perfil de usuário - Página personalizada
+✅ Busca inteligente - Encontre fotos facilmente
+✅ Design responsivo - Funciona em todos dispositivos
 
-## Available Scripts
+🛠️ Tecnologias Utilizadas
+Frontend:
+⚛️ React 18
 
-In the project directory, you can run:
+🎨 Redux Toolkit (gerenciamento de estado)
 
-### `npm start`
+🚀 React Router (navegação)
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+💅 CSS3 (estilização)
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+Backend:
+🟢 Node.js + Express
 
-### `npm test`
+🔐 JWT (autenticação)
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+📁 Multer (upload de arquivos)
 
-### `npm run build`
+🗄️ MongoDB + Mongoose
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+📁 Estrutura do Projeto
+text
+reactgram/
+├── frontend/                 # Aplicação React
+│   ├── public/
+│   └── src/
+│       ├── components/       # Componentes reutilizáveis
+│       ├── pages/           # Páginas da aplicação
+│       ├── slices/          # Redux slices
+│       ├── services/        # APIs services
+│       └── utils/           # Configurações
+│
+└── backend/                 # API Node.js
+    ├── controllers/
+    ├── models/
+    ├── routes/
+    └── uploads/            # Imagens armazenadas
+⚙️ Instalação e Configuração
+1. Clone o repositório
+bash
+git clone https://github.com/seu-usuario/reactgram.git
+cd reactgram
+2. Configure o Backend
+bash
+cd backend
+npm install
+Crie um arquivo .env na pasta backend:
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+env
+PORT=5000
+MONGO_URI=sua_string_de_conexao_mongodb
+JWT_SECRET=sua_chave_secreta_jwt
+3. Configure o Frontend
+bash
+cd ../frontend
+npm install
+4. Execute a Aplicação
+Terminal 1 - Backend:
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+bash
+cd backend
+npm start
+Terminal 2 - Frontend:
 
-### `npm run eject`
+bash
+cd frontend
+npm start
+🌐 Acesse a Aplicação
+Frontend: http://localhost:3000
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+Backend API: http://localhost:5000
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+Uploads: http://localhost:5000/uploads
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+🧪 Testando a Aplicação
+Cadastre um novo usuário
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+Faça login
 
-## Learn More
+Faça upload de uma foto
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+Explore outras fotos
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+Curtir e comentar
 
-### Code Splitting
+🔧 Comandos Disponíveis
+Frontend:
+bash
+npm start          # Inicia servidor de desenvolvimento
+npm run build      # Cria build de produção
+npm test           # Executa testes
+Backend:
+bash
+npm start          # Inicia servidor
+npm run dev        # Inicia com nodemon (desenvolvimento)
+📱 Páginas da Aplicação
+Página	Descrição
+/	Home com todas as fotos
+/login	Página de login
+/register	Página de cadastro
+/users/:id	Perfil do usuário
+/photos/:id	Detalhes de uma foto
+/search	Busca de fotos
+🎨 Features Técnicas
+Redux Toolkit para gerenciamento de estado global
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+Autenticação JWT com tokens seguros
 
-### Analyzing the Bundle Size
+Upload de imagens com preview
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+Lazy loading para melhor performance
 
-### Making a Progressive Web App
+Tratamento de erros em todas as requisições
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+Design responsivo mobile-first
 
-### Advanced Configuration
+🤝 Contribuindo
+Faça um fork do projeto
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+Crie uma branch para sua feature (git checkout -b feature/incrivel)
 
-### Deployment
+Commit suas mudanças (git commit -m 'Adiciona feature incrível')
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+Push para a branch (git push origin feature/incrivel)
 
-### `npm run build` fails to minify
+Abra um Pull Request
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+📄 Licença
+Este projeto está sob a licença MIT. Veja o arquivo LICENSE para mais detalhes.
+
+📞 Suporte
+Encontrou algum problema?
+
+Abra uma issue
+
+Entre em contato: seu-email@exemplo.com
+
+Desenvolvido com ❤️ por [Seu Nome]
+✨ Compartilhe momentos, compartilhe vida! ✨
+
+Documentação gerada em Janeiro 2025
