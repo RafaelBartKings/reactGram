@@ -39,19 +39,13 @@ const login = async data => {
    const config = requestConfig('POST', data);
 
    try {
-      // console.log('Login attempt with:', data); // DEBUG
 
       const response = await fetch(api + '/users/login', config);
 
       // Converte a resposta para JSON
       const res = await response.json();
 
-      console.log('Login response:', {
-         status: response.status,
-         ok: response.ok,
-         data: res
-      }); // DEBUG
-
+   
       if (!response.ok) {
          // Erro do backend (422, 404, etc.)
          console.error('Login failed:', res.errors); // DEBUG

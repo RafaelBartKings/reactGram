@@ -42,10 +42,6 @@ const EditProfile = () => {
    const handleSubmit = async e => {
       e.preventDefault();
 
-      console.log('=== INICIANDO ATUALIZAÇÃO ===');
-      console.log('profileImage:', profileImage);
-      console.log('É File?', profileImage instanceof File);
-
       // Gather user data from states
       const userData = {
          name: name.trim()
@@ -59,12 +55,10 @@ const EditProfile = () => {
          userData.password = password.trim();
       }
 
-      console.log('Dados coletados:', userData);
 
       // CORREÇÃO: Verificação melhorada para imagem
       // Se tiver imagem E for um arquivo válido, usa FormData
       if (profileImage && (profileImage instanceof File || profileImage instanceof Blob)) {
-         console.log('✅ TEM IMAGEM VÁLIDA - Criando FormData');
          
          const formData = new FormData();
 
@@ -76,17 +70,11 @@ const EditProfile = () => {
          // Adiciona a imagem
          formData.append('profileImage', profileImage);
 
-         // Debug: mostra o que tem no FormData
-         console.log('Conteúdo do FormData:');
-         for (let pair of formData.entries()) {
-            console.log(`${pair[0]}:`, pair[1]);
-         }
-
+         
          console.log('Enviando como FormData');
          await dispatch(updateProfile(formData));
       } else {
          // Se não tiver imagem, envia como JSON normal
-         console.log('❌ SEM IMAGEM VÁLIDA - Enviando como JSON:', userData);
          await dispatch(updateProfile(userData));
       }
 

@@ -145,6 +145,31 @@ export const comment = createAsyncThunk(
    }
 );
 
+// Get all photos
+export const getPhotos = createAsyncThunk(
+   'photo/getphotos',
+   async (_, thunkAPI) => {
+      const state = thunkAPI.getState();
+      const token = state.auth.user?.token;
+
+      if (!token) {
+         return thunkAPI.rejectWithValue('Usuário não autenticado');
+      }
+
+      try {
+         const data = await photoService.getPhotos(token);
+         return data;
+      } catch (error) {
+         // Melhor capturar a mensagem do erro
+         return thunkAPI.rejectWithValue(
+            error.response?.data?.message ||
+               error.message ||
+               'Erro ao buscar fotos'
+         );
+      }
+   }
+);
+
 export const photoSlice = createSlice({
    name: 'photo',
    initialState,
@@ -241,13 +266,31 @@ export const photoSlice = createSlice({
          .addCase(getPhoto.pending, state => {
             state.loading = true;
             state.error = false;
+            state.success = false;
          })
          .addCase(getPhoto.fulfilled, (state, action) => {
             state.loading = false;
             state.success = true;
             state.error = false;
-            state.photo = action.payload;
+
+            // Atualiza a foto individual
+            state.photo = action.payload || {};
+
+            // Se quiser também atualizar na lista (opcional):
+            if (action.payload?._id && state.photos) {
+               const updatedPhotos = state.photos.map(photo =>
+                  photo._id === action.payload._id ? action.payload : photo
+               );
+               state.photos = updatedPhotos;
+            }
          })
+         .addCase(getPhoto.rejected, (state, action) => {
+            state.loading = false;
+            state.success = false;
+            state.error = action.payload || 'Erro ao carregar a foto';
+            state.photo = {}; // Limpa a foto atual em caso de erro
+         })
+
          // photoSlice.js - Atualize o reducer do likePhoto.fulfilled
          .addCase(likePhoto.fulfilled, (state, action) => {
             // Guarde o número de likes ANTES de atualizar
@@ -353,6 +396,30 @@ export const photoSlice = createSlice({
             state.error = action.payload;
             state.success = false;
             state.message = action.payload || 'Erro ao fazer o comentário';
+         })
+         .addCase(getPhotos.pending, state => {
+            state.loading = true;
+            state.error = false;
+            state.success = false;
+         })
+         .addCase(getPhotos.fulfilled, (state, action) => {
+            state.loading = false;
+            state.success = true;
+            state.error = false;
+
+            // Garante que é um array
+            const newPhotos = Array.isArray(action.payload)
+               ? action.payload
+               : [];
+
+            state.photos = newPhotos;
+            state.message = `Carregadas ${newPhotos.length} fotos`;
+         })
+         .addCase(getPhotos.rejected, (state, action) => {
+            state.loading = false;
+            state.success = false;
+            state.error = action.payload || 'Erro ao carregar fotos';
+            state.photos = []; // Limpa a lista em caso de erro
          });
    }
 });

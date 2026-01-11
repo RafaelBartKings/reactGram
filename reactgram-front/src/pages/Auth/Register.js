@@ -31,8 +31,6 @@ const Register = () => {
          passwordConfirmation
       };
 
-      console.log(user);
-
       dispatch(register(user));
    };
 
