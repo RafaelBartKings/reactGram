@@ -110,7 +110,6 @@ const like = async (id, token) => {
 
       // Se for erro 422, retorna o resultado para tratamento
       if (res.status === 422) {
-         console.log('Usuário já deu like');
          return result;
       }
 
@@ -125,13 +124,28 @@ const like = async (id, token) => {
    }
 };
 
+// Add comment to a photo
+// photoService.js - Atualize temporariamente
+const comment = async (dataComment, id, token) => {
+   const config = requestConfig('PUT', dataComment, token);
+   try {
+      const res = await fetch(api + '/photos/comment/' + id, config);
+      const data = await res.json();
+
+      return data;
+   } catch (error) {
+      console.log(error);
+   }
+};
+
 const photoService = {
    publishPhoto,
    getUserPhotos,
    deletePhoto,
    updatePhoto,
    getPhoto,
-   like
+   like,
+   comment
 };
 
 export default photoService;

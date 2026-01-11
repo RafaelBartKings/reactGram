@@ -3,7 +3,9 @@ import photoService from '../services/photoService';
 
 const initialState = {
    photos: [],
-   photo: {},
+   photo: {
+      comments: []
+   },
    error: false,
    success: false,
    loading: false,
@@ -113,6 +115,36 @@ export const likePhoto = createAsyncThunk(
    }
 );
 
+// Add comment to photo
+
+export const comment = createAsyncThunk(
+   'photo/comment',
+   async ({ commentData, photoId }, thunkAPI) => {
+      const token = thunkAPI.getState().auth.user.token;
+
+      try {
+         const data = await photoService.comment(
+            { comment: commentData }, // Envia {comment: "texto"}
+            photoId,
+            token
+         );
+
+         if (data.errors) {
+            return thunkAPI.rejectWithValue(data.errors[0]);
+         }
+
+         // ✅ CORREÇÃO: Estrutura correta do payload
+         return {
+            newComment: data.comment, // O objeto completo do comentário
+            message: data.message,
+            photoId
+         };
+      } catch (error) {
+         return thunkAPI.rejectWithValue(error.message);
+      }
+   }
+);
+
 export const photoSlice = createSlice({
    name: 'photo',
    initialState,
@@ -218,6 +250,8 @@ export const photoSlice = createSlice({
          })
          // photoSlice.js - Atualize o reducer do likePhoto.fulfilled
          .addCase(likePhoto.fulfilled, (state, action) => {
+            // Guarde o número de likes ANTES de atualizar
+            const previousLikesCount = state.photo?.likes?.length || 0;
 
             state.loading = false;
             state.success = true;
@@ -230,7 +264,7 @@ export const photoSlice = createSlice({
                return;
             }
 
-            // Atualiza a foto individual (se estiver visualizando uma foto)
+            // Atualiza a foto individual
             if (state.photo && state.photo._id === updatedPhoto._id) {
                state.photo = {
                   ...state.photo,
@@ -240,7 +274,7 @@ export const photoSlice = createSlice({
                };
             }
 
-            // Atualiza a foto na lista de fotos (se existir)
+            // Atualiza a foto na lista de fotos
             if (state.photos && Array.isArray(state.photos)) {
                state.photos = state.photos.map(photo => {
                   if (photo._id === updatedPhoto._id) {
@@ -255,16 +289,70 @@ export const photoSlice = createSlice({
                });
             }
 
-            state.message =
-               updatedPhoto.likes?.length > state.photo?.likes?.length
-                  ? 'Like adicionado!'
-                  : 'Like removido!';
+            // Compare com o valor ANTES da atualização
+            const newLikesCount = updatedPhoto.likes?.length || 0;
+
+            if (newLikesCount > previousLikesCount) {
+               state.message = 'Like adicionado!';
+            } else if (newLikesCount < previousLikesCount) {
+               state.message = 'Like removido!';
+            } else {
+               state.message = 'Like atualizado!';
+            }
          })
          .addCase(likePhoto.rejected, (state, action) => {
             state.loading = false;
             state.error = action.payload;
             state.success = false;
             state.message = action.payload || 'Erro ao dar like';
+         })
+         .addCase(comment.pending, state => {
+            state.loading = true;
+            state.error = false;
+         })
+         .addCase(comment.fulfilled, (state, action) => {
+            state.loading = false;
+            state.success = true;
+            state.error = null;
+
+            // Extrai os dados da forma correta
+            const { photoId, newComment, message } = action.payload;
+
+            // ✅ 1. Atualiza a foto individual (state.photo)
+            if (state.photo && state.photo._id === photoId) {
+               // Cria um novo array com o novo comentário
+               const updatedComments = [
+                  ...(state.photo.comments || []),
+                  newComment // Este é o objeto: {comment: "Boa", userName: "rafis", ...}
+               ];
+
+               // Atualiza o estado IMUTAVELMENTE
+               state.photo = {
+                  ...state.photo,
+                  comments: updatedComments
+               };
+            }
+
+            // ✅ 2. Atualiza na lista de fotos (state.photos)
+            if (state.photos && Array.isArray(state.photos)) {
+               state.photos = state.photos.map(photo => {
+                  if (photo._id === photoId) {
+                     return {
+                        ...photo,
+                        comments: [...(photo.comments || []), newComment]
+                     };
+                  }
+                  return photo;
+               });
+            }
+
+            state.message = message;
+         })
+         .addCase(comment.rejected, (state, action) => {
+            state.loading = false;
+            state.error = action.payload;
+            state.success = false;
+            state.message = action.payload || 'Erro ao fazer o comentário';
          });
    }
 });
